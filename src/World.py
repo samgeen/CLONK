@@ -44,6 +44,7 @@ class World(object):
             fontsize = np.random.randint(50,100)
             sprite = pyglet.text.Label(text=r"#"+name,x=x,y=y,
                                            font_name=fontname,font_size=fontsize,
+                                           bold=True,
                                            anchor_x='center',anchor_y='center',
                                            color=grey,batch=self._bkg)
             self._sprites.append(sprite)
