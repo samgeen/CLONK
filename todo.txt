@@ -1,8 +1,7 @@
 TODO:
-- Make background objects in group=pyglet.graphics.OrderedGroup(0), not same batch
+- Make clonk objects die after a certain time
 - Make world objects scroll (attach all non-player objects to world)
 - Make player snap to world region
-- Have player fire CLONK smilie
 - Generate asteroids
 - Have asteroids collide with player, CLONK smilies - see temp/collision.py and temp/demo.py
 - Keep score in corner

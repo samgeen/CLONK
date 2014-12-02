@@ -83,9 +83,9 @@ class MainGame(Level.Level):
         cx, cy = self.Window().get_size()
         self._score = Score()
         self._score.Setup(cx, cy)
-        self._player = Player.Player()
         size = (cx*5,cy*5)
         self._world = World.World(size)
+        self._player = Player.Player(size[0]/2, size[1]/2, self._world)
         
     def Run(self, timestep):
         '''
@@ -94,6 +94,8 @@ class MainGame(Level.Level):
         # Run
         pyglet.gl.glClearColor(1,1,1,1)
         self._player.Move(timestep)
+        self._world.Run(timestep)
+        # Scroll window
         x, y = self._player.Position()
         cx, cy = self.Window().width, self.Window().height
         self.Window().ScrollTo(x-cx/2,y-cy/2)
@@ -133,6 +135,14 @@ class MainGame(Level.Level):
         y -= cy/2
         self._player.Rotate(x,y)
         
+    def OnMouseButton(self, state):
+        '''
+        Register the pressing or releasing of a mouse button
+        This can be overridden by the concrete class if desired, or left inactive
+        state - a dictionary of the mouse state:
+                   {"pos": (x,y), "button": button, "mod": modifier keys used, "pressed":True or False}
+        '''
+        self._player.OnMouseButton(state)
         
 
     def OnKeyboard(self, state):

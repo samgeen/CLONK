@@ -16,7 +16,7 @@ import src.EndScreen as EndScreen
 
 DEBUG = True
 
-screenSize = (1024,768)
+screenSize = (1280,960)
 
 class GameWindow(pyglet.window.Window):
     # YAY SUBCLASSING, YOU HAVE NO NEGATIVE EFFECTS WHATSOEVER AND ARE NOT A TERRIBLE IDEA

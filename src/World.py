@@ -20,9 +20,19 @@ def ColHash(r,g=None,b=None):
 
 grey = color=(100,100,100,100)
 
+class Entity(object):
+    '''
+    A moveable entity in the game world
+    '''
+    def __init__(self, x,y, vx,vy):
+        self._x = x
+        self._y = y
+        self._vx = vx
+        self._vy = vy
+
 class World(object):
     '''
-    classdocs
+    The world and all in it
     '''
 
 
@@ -33,7 +43,9 @@ class World(object):
         self._size = size
         self._names = channels
         self._sprites = []
-        self._bkg = pyglet.graphics.Batch()
+        self._entities = []
+        self._bkg = pyglet.graphics.OrderedGroup(0)
+        self._frg = pyglet.graphics.OrderedGroup(1)
         self._Build()
         
     def _Build(self):
@@ -46,8 +58,15 @@ class World(object):
                                            font_name=fontname,font_size=fontsize,
                                            bold=True,
                                            anchor_x='center',anchor_y='center',
-                                           color=grey,batch=self._bkg)
+                                           color=grey,group=self._bkg)
             self._sprites.append(sprite)
+    
+    def Run(self, dt):
+        for entity in self._entities:
+            entity.Move(dt)
+            
+    def AddEntity(self, entity):
+        self._entities.append(entity)
             
     def Scroll(self):
         for sprite in self._sprites:
@@ -55,5 +74,8 @@ class World(object):
             pass
                     
     def Draw(self):
-        self._bkg.draw()
+        for sprite in self._sprites:
+            sprite.draw()
+        for entity in self._entities:
+            entity.Draw()
         
