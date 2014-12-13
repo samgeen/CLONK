@@ -25,6 +25,10 @@ class GameWindow(pyglet.window.Window):
         glEnable(GL_BLEND)
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
         glClearDepth(1.0)
+        
+        # Screenshots
+        self._screennum = 1
+        self._takeshot = False
        
         # Clock
         self._clock = pyglet.clock.Clock()
@@ -44,6 +48,7 @@ class GameWindow(pyglet.window.Window):
 
         # Fixes bug in sound under Linux
         pyglet.options['audio'] = ('alsa', 'openal', 'silent')
+    
             
     def ChangeLevel(self, nextLevel):
         '''
@@ -85,6 +90,9 @@ class GameWindow(pyglet.window.Window):
         # Scroll view to this position
         self._scrollpos = (x,y)
         self.on_resize(self.width, self.height)
+        
+    def TakeShot(self):
+        self._takeshot = True
     
     def main_loop(self):
 
@@ -109,9 +117,18 @@ class GameWindow(pyglet.window.Window):
             self.update()
             
             self._level.Run(dtime)
-
+                
             self.flip()
+            
+            if self._takeshot:
+                sname = 'screenshots/screenshot'+str(self._screennum).zfill(5)+'.png'
+                self._screennum += 1
+                pyglet.image.get_buffer_manager().get_color_buffer().save(sname)
+                pyglet.image.get_buffer_manager().get_color_buffer().save(sname)
+                self._takeshot = False
+                
             pyglet.clock.tick()
+            
 
 def Run():
     gWindow = GameWindow(screenSize[0], screenSize[1],caption = 'CLONK')

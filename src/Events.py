@@ -8,6 +8,8 @@ Created on 8 May 2013
 A module listing all events used by the game with some convenience functions
 '''
 
+import pyglet
+
 class UserInputHandler(object):
     '''
     Handles user input from mouse and keyboard
@@ -34,7 +36,12 @@ class UserInputHandler(object):
         self._level.OnMouseMove(motion)
         
     def on_key_press(self, button, modifiers):
+        global screennum
         press = {"button":button, "mod": modifiers, "pressed":True}
+        # Screenshot
+        if button == pyglet.window.key.EQUAL:
+            self._level.Window().TakeShot()
+        # Call keyboard
         self._level.OnKeyboard(press)
 
     def on_key_release(self, button, modifiers):

@@ -79,13 +79,15 @@ class MainGame(Level.Level):
         '''
         Set up the main level
         '''
-        glEnable(GL_DEPTH_TEST)
+        pyglet.gl.glEnable(pyglet.gl.GL_BLEND)
+        pyglet.gl.glBlendFunc(pyglet.gl.GL_SRC_ALPHA, pyglet.gl.GL_ONE_MINUS_SRC_ALPHA)
+        pyglet.gl.glDisable(pyglet.gl.GL_DEPTH_TEST)
         cx, cy = self.Window().get_size()
         self._score = Score()
         self._score.Setup(cx, cy)
-        size = (cx*5,cy*5)
-        self._world = World.World(size)
-        self._player = Player.Player(size[0]/2, size[1]/2, self._world)
+        size = (cx*4,cy*4)
+        self._world = World.World(size,self.Window().get_size())
+        self._player = self._world.Player()
         
     def Run(self, timestep):
         '''
