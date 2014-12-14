@@ -237,7 +237,7 @@ class World(object):
         self._passives = []
         self._entities = {}
         self._entities[Asteroid] = []
-        self._explain = pyglet.text.Label(text="WSAD & Mouse to move, Space / LMB to fire, Clonk you-know-who",
+        self._explain = pyglet.text.Label(text="W & Mouse to move, Space / LMB to fire, Clonk you-know-who",
                                           x=0,y=-100,
                                           font_name=fontname,
                                           font_size=26,
