@@ -45,10 +45,7 @@ class Rect:
 	@staticmethod
 	def from_sprite(s):
 		'''Create a rectangle matching the bounds of the given sprite'''
-		try:
-			i = (s._texture if not s._animation else s._animation.frames[s._frame_index].image)
-		except:
-			i = LabelType(s)
+		i = (s.image if not s._animation else s._animation.frames[s._frame_index].image)
 		x = int(s.x - i.anchor_x)
 		y = int(s.y - i.anchor_y)
 		return Rect(x, y, x + s.width, y + s.height)
@@ -92,7 +89,8 @@ def collide(lhs, rhs):
 	'''Checks for collision between two sprites'''
 	
 	# first check if the bounds overlap, no need to go further if they don't
-	r1, r2 = lhs.get_rect(), rhs.get_rect()
+	r1 = lhs.get_rect() 
+	r2 = rhs.get_rect()
 	if r1.collides(r2):
 		# TODO: REPLACE THIS AND FIX THE BELOW
 		return True

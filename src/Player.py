@@ -21,13 +21,15 @@ class Clonk(object):
     def __init__(self, moveable):
         self._moveable = moveable
         self._life = self.cooldown
-        self._collision = collide.SpriteCollision(self._moveable.sprite)
+        self._sprite = self._moveable.sprite
+        self._collision = collide.SpriteCollision(self._sprite)
         
     def Move(self, dt):
         self._life -= dt
         if self._life < 0.0:
             self.Kill()
-        self._moveable.Move(dt)
+        else:
+            self._moveable.Move(dt)
         
     def Draw(self):
         self._moveable.sprite.draw()
@@ -95,6 +97,13 @@ class PlayerSprite(object):
         
     def UnpoweredSprite(self):
         return self._unpowered
+    
+    def delete(self):
+        '''
+        Match pyglet interface
+        '''
+        self._images[False].delete()
+        self._images[True].delete()
             
 class Moveable(object):
     def __init__(self, x, y, sprite, world, vx=0.0, vy=0.0, acc=100.0,angle=None,fric=0.0):
@@ -122,6 +131,9 @@ class Moveable(object):
     def Kill(self):
         self._alive = False
         
+    def Delete(self):
+        self.sprite.delete()
+        
     def Rotate(self, x,y):
         self.angle = np.arctan2(-y,x)
         
@@ -143,7 +155,7 @@ class Moveable(object):
         self.x += dx
         self.y += dy
         # Move sprite
-        self._LoopInWorld(self)
+        #self._LoopInWorld(self)
         self.sprite.x = self.x
         self.sprite.y = self.y
         self.sprite.rotation = self.angle*180/np.pi
@@ -157,7 +169,6 @@ class Moveable(object):
         self.sprite.y = self.y
         px,py = self._world.Player().Position(centred=True)
         wx,wy = self._world.WindowSize()
-        cx,cy = self._world.Size()
         sx = wx/2
         sy = wy/2
         ox = self.x
@@ -169,8 +180,8 @@ class Moveable(object):
             ow = self.sprite.content_width/2
             oh = self.sprite.content_height/2
         # Loop sprite in world to match player view
-        if self.x != px and self.y != py:
-            self._LoopDraw(cx,cy,px,py,sx,sy,ox,ow,oy,oh)
+        #if self.x != px and self.y != py:
+        #    self._LoopDraw(cx,cy,px,py,sx,sy,ox,ow,oy,oh)
         #self.sprite.draw()
         
     def _LoopDraw(self,cx,cy,px,py,sx,sy,ox,ow,oy,oh):
@@ -215,7 +226,7 @@ class Player(object):
         '''
         self._world = world
         self._sprite = PlayerSprite(x,y)
-        self._movement = Moveable(x, y, self._sprite, self._world,fric=0.8,acc=1e3)
+        self._movement = Moveable(x, y, self._sprite, self._world,fric=0.2,acc=1e3)
         self._fire = False
         self._cooldown = 0.0
         self._collision = collide.SpriteCollision(self._sprite.UnpoweredSprite())
@@ -225,6 +236,9 @@ class Player(object):
             return (self._sprite.x,self._sprite.y)
         else:
             return (self._sprite.x+self._sprite.width,self._sprite.y+self._sprite.height)
+        
+    def Velocity(self):
+        return self._movement.vx, self._movement.vy
     
     def Draw(self):
         self._sprite.Draw()
@@ -237,11 +251,12 @@ class Player(object):
                 y  = self._movement.y
                 vx = self._movement.vx
                 vy = self._movement.vy
-                cvel = 400.0
+                cvel = 800.0
                 vx += cvel * np.cos(self._movement.angle)
                 vy -= cvel * np.sin(self._movement.angle)
+                batch = self._world.ForeBatch()
                 clonksprite = zsprite.ZSprite(Clonk.image,x,y,z=11,
-                                            subpixel=True)
+                                            subpixel=True,batch=batch)
                 clonksprite.scale = 0.25
                 moveable = Moveable(x,y,clonksprite,self._world,vx,vy,angle=self._movement.angle)
                 entity = Clonk(moveable)
@@ -289,4 +304,6 @@ class Player(object):
     def Collision(self):
         return self._collision
 
+    def Kill(self):
+        print "URDEAD"
 

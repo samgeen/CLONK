@@ -4,7 +4,7 @@ Created on 25 Apr 2013
 @author: samgeen
 '''
 
-import Level, zsprite, EndScreen, Player, World
+import Level, zsprite, EndScreen, Player, World, DieScreen
 
 import pyglet
 from pyglet.gl import * # it already has the gl prefix so OK whatevs
@@ -30,8 +30,9 @@ class Score(object):
         pyglet.resource.path = ['data']
         pyglet.resource.reindex()
         bigfont = pyglet.font.load(fontname, 64,bold=False)
-        self._scoretext = pyglet.font.Text(bigfont, str(self._score),
-                                          x=width - 64*2,y=height-128,z=200,color=black)
+        self._scoretext = pyglet.font.Text(bigfont, str(self._score) + " CLONK",
+                                          x=width-10,y=height-10,z=200,color=black,
+                                          halign="right",valign="top")
         
     def OffsetDraw(self, x, y):
         self._xoff = x
@@ -39,7 +40,7 @@ class Score(object):
         
     def AddScore(self):
         self._score += 1
-        self._scoretext.text = str(self._score)
+        self._scoretext.text = str(self._score)+ " CLONK"
         
     def Score(self):
         return self._score
@@ -48,7 +49,7 @@ class Score(object):
         self._mode = mode
     
     def Draw(self):
-        self._scoretext.text = str(self._score)
+        #self._scoretext.text = str(self._score)
         self._DrawItem(self._scoretext)
             
     def _DrawItem(self, sprite):
@@ -74,6 +75,11 @@ class MainGame(Level.Level):
         self._score = None
         self._player = None
         self._world = None
+        self._oldx = 0.0
+        self._oldy = 0.0
+        
+    def Score(self):
+        return self._score
         
     def Setup(self):
         '''
@@ -85,8 +91,7 @@ class MainGame(Level.Level):
         cx, cy = self.Window().get_size()
         self._score = Score()
         self._score.Setup(cx, cy)
-        size = (cx*4,cy*4)
-        self._world = World.World(size,self.Window().get_size())
+        self._world = World.World(self.Window().get_size(),self)
         self._player = self._world.Player()
         
     def Run(self, timestep):
@@ -98,18 +103,23 @@ class MainGame(Level.Level):
         self._player.Move(timestep)
         self._world.Run(timestep)
         # Scroll window
-        x, y = self._player.Position()
+        x,y = self._player.Position()
         cx, cy = self.Window().width, self.Window().height
-        self.Window().ScrollTo(x-cx/2,y-cy/2)
+        magnify = 10.0
+        self.Window().ScrollTo(x-cx/2,
+                               y-cy/2)
         # Score
-        x,y = (0,0)
-        self._score.OffsetDraw(x-cx/2,y-cy/2)
+        #self._score.OffsetDraw(x-cx/2,y-cy/2)
         #if self._urchin.AskForMore():
-        self._score.AddScore()
+        #self._score.AddScore()
         # Draw
         self._world.Draw()
-        self._score.Draw()
         self._player.Draw()
+        pyglet.gl.glMatrixMode(gl.GL_PROJECTION)
+        pyglet.gl.glLoadIdentity()
+        pyglet.gl.glOrtho(0, cx, 0, cy, -1000, 1000)
+        pyglet.gl.glMatrixMode(gl.GL_MODELVIEW)
+        self._score.Draw()
         '''
         self._world.Draw()
         self._disguises.Draw()
@@ -117,6 +127,9 @@ class MainGame(Level.Level):
         if self._score.Score() >= 11:
             self.Window().ChangeLevel(self._winScreen)
         '''
+        
+    def DieScreen(self):
+        self.ChangeLevel(DieScreen.DieScreen(self._score.Score()))
         
     def OnMouseButton(self, state):
         '''

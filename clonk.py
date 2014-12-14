@@ -14,7 +14,7 @@ import src.MainGame as MainGame
 import src.MakeWeeSplash as MakeWeeSplash
 import src.EndScreen as EndScreen
 
-DEBUG = True
+DEBUG = False
 
 screenSize = (1280,960)
 

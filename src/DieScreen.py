@@ -4,7 +4,7 @@ Created on 25 Apr 2013
 @author: samgeen
 '''
 
-import Level
+import Level, MainGame
 import pyglet
 import numpy as np
 
@@ -12,20 +12,20 @@ white = color=(1.0,1.0,1.0,1.0)
 red = color=(1.0,0.0,0.0,1.0)
 black = color=(0.0,0.0,0.0,1.0)
         
-class MakeWeeSplash(Level.Level):
+class DieScreen(Level.Level):
     '''
-    I am five years old. That is the number of years old I am.
+    GAME OVER
     '''
 
-    def __init__(self, nextLevel):
+    def __init__(self, numclonked):
         '''
         Constructor
         nextLevel - Level object to pass to the screen next
         '''
         Level.Level.__init__(self)
-        self._nextLevel = nextLevel
+        self._numclonked = numclonked
         self._time = 0.0
-        self._mwTime = 6.0 # seconds
+        self._mwTime = 1.0 # seconds
         self._sequence = ["MakeWee","Title"]
         self._sequence = 0
         self._makeweetext = None
@@ -50,12 +50,12 @@ class MakeWeeSplash(Level.Level):
         cx /= 2
         cy /= 2
         # MakeWee text
-        text = "A MakeWee Games Production"
+        text = "Shut the hell up"
         self._makeweetext = pyglet.font.Text(bigfont, text,x=cx,y=cy,halign='center',valign='center',color=black)
         # Title text
-        text = "CLONK"
+        text = str(self._numclonked)+" clonked"
         self._title = pyglet.font.Text(bigfont, text,x=cx,y=cy,halign='center',valign='center',color=black)
-        text = "Press a key to begin"
+        text = "Press a key to try again"
         self._clicktobegin = pyglet.font.Text(smallfont, text,x=cx,y=40,halign='center',valign='baseline',color=black)
         # Background
         #bgimage = pyglet.resource.image(self._bgimage)
@@ -92,12 +92,14 @@ class MakeWeeSplash(Level.Level):
         '''
         self._sequence += 1
         if self._sequence > 1:
-            self.ChangeLevel(self._nextLevel)
+            self.ChangeLevel(MainGame.MainGame())
         
     def OnMouseButton(self, button):
-        if button["pressed"] == True:
-            self._Skip()
+        if self._sequence > 0:
+            if button["pressed"] == True:
+                self._Skip()
         
     def OnKeyboard(self, state):
-        if state["pressed"] == True:
-            self._Skip()
+        if self._sequence > 0:
+            if state["pressed"] == True:
+                self._Skip()
