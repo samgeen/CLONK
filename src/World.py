@@ -108,7 +108,7 @@ class Asteroid(object):
         # Set positional information
         cx,cy = world.WindowSize()
         px,py = world.Player().Position(centred=True)
-        speed = 20.0
+        speed = 50.0
         fontsize = np.random.randint(30,70)
         colour = black
         batch = world.ForeBatch()
@@ -224,7 +224,7 @@ class World(object):
     The world and all in it
     '''
 
-    MAXROIDS = 50
+    MAXROIDS = 100
 
     def __init__(self,winsize, maingame):
         '''
@@ -237,10 +237,10 @@ class World(object):
         self._passives = []
         self._entities = {}
         self._entities[Asteroid] = []
-        self._explain = pyglet.text.Label(text="WSAD to move, Space to fire, Clonk you-know-who",
+        self._explain = pyglet.text.Label(text="WSAD & Mouse to move, Space / LMB to fire, Clonk you-know-who",
                                           x=0,y=-100,
                                           font_name=fontname,
-                                          font_size=30,
+                                          font_size=26,
                                           color=black,anchor_x="center",anchor_y="center")
         self._bkg = pyglet.graphics.Batch()
         self._frg = pyglet.graphics.Batch()
